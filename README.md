@@ -1,107 +1,148 @@
-Sistema de Trading AlgorÌtmico com IA para Criptomoedas
-Este repositÛrio contÈm o cÛdigo-fonte de um ecossistema completo para trading algorÌtmico no mercado de criptomoedas, utilizando Machine Learning para prever movimentos de preÁo e executar operaÁıes de forma autÙnoma na exchange Bybit.
+Gerenciador de Ponto Eletr√¥nico
+por Ronaldo Neves B Neto
 
-? Vis„o Geral do Projeto
-O sistema È composto por m˙ltiplos mÛdulos que trabalham em conjunto para cobrir todo o ciclo de vida de uma estratÈgia de trading quantitativo:
+üìñ Sobre o Projeto
+O Gerenciador de Ponto √© um sistema web completo, desenvolvido em Python com o framework Flask, para controlar e gerenciar o registro de ponto de funcion√°rios. A aplica√ß√£o foi criada para ser simples e eficiente, permitindo o registro de ponto de duas formas: manual ou atrav√©s de um leitor de c√≥digo de barras, ideal para portarias e recep√ß√µes com alto fluxo de pessoas.
 
-Engenharia de Features: CriaÁ„o de um conjunto rico de indicadores tÈcnicos a partir de dados histÛricos.
+O sistema conta com tr√™s n√≠veis de acesso (Administrador, Seguran√ßa e Comum), relat√≥rios detalhados em PDF, dashboards com gr√°ficos e um sistema de backup do banco de dados.
 
-Treinamento de Modelo: Treinamento de modelos de Machine Learning (XGBoost) especializados para cada par de criptomoedas.
+‚ú® Funcionalidades Principais
+O sistema √© dividido em tr√™s perfis de usu√°rio, cada um com suas permiss√µes espec√≠ficas:
 
-Backtesting e OtimizaÁ„o: ValidaÁ„o rigorosa da estratÈgia em dados passados e otimizaÁ„o de hiperpar‚metros para maximizar o retorno ajustado ao risco.
+1. Perfil de Administrador (admin)
+O administrador tem controle total sobre o sistema.
 
-ExecuÁ„o em Tempo Real: Um robÙ que consome as prediÁıes do modelo, gerencia risco e executa ordens na Bybit.
+Dashboard Intuitivo: Exibe gr√°ficos com a distribui√ß√£o de funcion√°rios por tipo de perfil e a quantidade de pontos batidos no dia.
 
-Monitoramento e Controle: Um painel web interativo para acompanhar a performance, visualizar posiÁıes e intervir manualmente, se necess·rio.
+Gerenciamento de Usu√°rios: Permite cadastrar, visualizar, editar e excluir funcion√°rios. √â poss√≠vel filtrar usu√°rios por nome, matr√≠cula, tipo e data de cadastro.
 
-?? Arquitetura
-O projeto È modularizado para garantir clareza, manutenÁ„o e escalabilidade:
+Edi√ß√£o de Pontos: Corrige registros de ponto de qualquer funcion√°rio, ajustando hor√°rios de entrada e sa√≠da quando necess√°rio.
 
-feature_engineering.py: MÛdulo central para calcular todos os indicadores tÈcnicos (EMAs, RSI, ADX, Bandas de Bollinger, etc.), garantindo consistÍncia entre o treinamento e a execuÁ„o.
+Gera√ß√£o de C√≥digos de Barras: Cria e exibe o c√≥digo de barras associado √† matr√≠cula de cada funcion√°rio, que pode ser impresso em crach√°s.
 
-model_trainer.py: Script respons·vel por treinar um modelo XGBoost para cada ativo, criando um "artefato" (.pkl) que empacota o modelo, a lista de features e a funÁ„o de prÈ-processamento.
+Backup do Banco de Dados: Com um clique, o sistema gera um arquivo .zip contendo o backup do banco de dados (SQLite), o envia para um e-mail pr√©-configurado e o disponibiliza para download.
 
-inference_server.py: Um servidor de API (Flask) que carrega os modelos treinados e expıe um endpoint /predict para fornecer previsıes em tempo real, desacoplando a IA do robÙ principal.
+Relat√≥rios Avan√ßados em PDF: Gera relat√≥rios de ponto detalhados e personalizados.
 
-backtest.py: Ferramenta para simular a execuÁ„o da estratÈgia em dados histÛricos, considerando custos realistas como taxas e slippage.
+Como Funcionam os Relat√≥rios?
+Esta √© uma das funcionalidades mais poderosas do sistema. O administrador pode filtrar por:
 
-otimizador.py: Utiliza Grid Search para testar m˙ltiplas combinaÁıes de par‚metros (ex: limiar de confianÁa do modelo, limiar de ADX) e encontrar a configuraÁ„o mais lucrativa.
+Per√≠odo: Hoje, semanal, mensal ou um intervalo de datas personalizado.
 
-bot_bybit.py: O coraÁ„o do sistema. Este robÙ orquestra todo o processo em tempo real: busca dados, consulta a API de inferÍncia, calcula o tamanho da posiÁ„o com base no risco, executa ordens e gerencia o Trailing Stop Loss em uma thread separada.
+Funcion√°rio: Seleciona um usu√°rio espec√≠fico.
 
-painel.py: Uma interface de usu·rio (NiceGUI) que fornece um dashboard completo para monitoramento, com gr·ficos de performance, visualizaÁ„o de posiÁıes abertas e logs em tempo real.
+Carga Hor√°ria: Define a jornada de trabalho padr√£o (4, 7 ou 8 horas di√°rias).
 
-?? Tecnologias Utilizadas
-Linguagem: Python
+Com base nesses filtros, o sistema gera um PDF que calcula:
 
-Machine Learning: Scikit-learn, XGBoost
+Total de Horas Trabalhadas no Dia: Soma os intervalos entre as entradas e sa√≠das ((saida1 - entrada1) + (saida2 - entrada2)).
 
-An·lise de Dados: Pandas, NumPy, TA-Lib
+Horas Extras / Horas Devidas (Extra/Devedor): Compara o total de horas trabalhadas no dia com a Carga Hor√°ria padr√£o.
 
-API (Servidor de InferÍncia): Flask
+Horas Positivas (Extras): Se o funcion√°rio trabalhou mais que o padr√£o, a diferen√ßa √© registrada como hora extra.
 
-Dashboard (UI): NiceGUI, Plotly
+Horas Negativas (Devendo): Se trabalhou menos, a diferen√ßa √© registrada como hora a dever, exibida em vermelho para f√°cil identifica√ß√£o.
 
-Conex„o com a Exchange: PyBit
+Saldo Final: Ao final do relat√≥rio, √© apresentado o balan√ßo total de horas do per√≠odo, mostrando se o funcion√°rio tem um saldo positivo (horas extras) ou negativo (horas a compensar).
 
-Banco de Dados: SQLite (para persistÍncia do histÛrico de trades)
+2. Perfil de Seguran√ßa (seguranca)
+Este perfil √© focado exclusivamente no registro dos pontos.
 
-? Como Executar o Projeto
-1. PrÈ-requisitos
-Python 3.8 ou superior
+P√°gina de Registro de Ponto: √â a √∫nica tela acess√≠vel. O seguran√ßa pode:
 
-Uma conta na exchange Bybit (real ou testnet) com chaves de API.
+Bater o ponto com leitor: O cursor fica posicionado no campo de busca. Ao escanear o c√≥digo de barras do funcion√°rio, o sistema captura a matr√≠cula e registra o ponto automaticamente.
 
-2. InstalaÁ„o
-Clone o repositÛrio:
+Bater o ponto manualmente: Caso o funcion√°rio esteja sem o crach√°, o seguran√ßa pode buscar pelo nome ou matr√≠cula e registrar o ponto.
 
+Visualiza√ß√£o em Tempo Real: A p√°gina exibe uma tabela com os √∫ltimos pontos registrados no dia, que √© atualizada a cada novo registro.
 
-git clone https://github.com/seu-usuario/nome-do-repo.git
-cd nome-do-repo
-Crie e ative um ambiente virtual:
+3. Perfil Comum (comum)
+O perfil do funcion√°rio, para consulta dos pr√≥prios registros.
 
+Dashboard Pessoal: Ao fazer login, o funcion√°rio visualiza uma tabela com seus registros de ponto mais recentes e o total de horas trabalhadas em cada dia.
 
+Aviso de Contato: Uma se√ß√£o de avisos o orienta a procurar o RH ou seu gestor em caso de inconsist√™ncias.
+
+üõ†Ô∏è Tecnologias Utilizadas
+Este projeto foi constru√≠do utilizando as seguintes tecnologias e bibliotecas:
+
+Backend:
+
+Python 3
+
+Flask: Micro-framework web para criar as rotas, a l√≥gica e servir as p√°ginas.
+
+SQLite: Banco de dados relacional leve e baseado em arquivo.
+
+Frontend:
+
+HTML5
+
+CSS3
+
+JavaScript: Para interatividade no lado do cliente (eventos, requisi√ß√µes AJAX).
+
+Bibliotecas Python Not√°veis:
+
+werkzeug: Para hashing e seguran√ßa de senhas.
+
+python-barcode: Para a gera√ß√£o das imagens de c√≥digo de barras.
+
+reportlab: Para a cria√ß√£o din√¢mica dos relat√≥rios em PDF.
+
+smtplib: Para o envio de e-mails com o backup do banco de dados.
+
+üöÄ Como Executar o Projeto Localmente
+Siga os passos abaixo para rodar a aplica√ß√£o na sua m√°quina.
+
+Pr√©-requisitos
+Python 3.x instalado.
+
+Git instalado.
+
+Passos
+Clone o reposit√≥rio:
+
+git clone https://github.com/ronaldoneves95/ponto-eletronico/.git
+Navegue at√© o diret√≥rio do projeto:
+
+cd Gerenciador-de-Ponto
+Crie e ative um ambiente virtual (recomendado):
+
+# Para Windows
 python -m venv venv
-# Windows
-.\venv\Scripts\activate
-# macOS/Linux
+venv\Scripts\activate
+
+# Para macOS/Linux
+python3 -m venv venv
 source venv/bin/activate
-Instale as dependÍncias:
+Instale as depend√™ncias:
+O arquivo requirements.txt cont√©m todas as bibliotecas necess√°rias.
 
+pip install -r "Ponto Cod Barras/requirements.txt"
+Execute a aplica√ß√£o:
 
-pip install -r requirements.txt
-3. ConfiguraÁ„o
-Dados HistÛricos: Crie uma pasta chamada data/ na raiz do projeto e adicione os arquivos CSV com os dados histÛricos (ex: dados_historicos_BTCUSDT_5m.csv).
+python "Ponto Cod Barras/app.py"
+Acesse o sistema:
+Abra seu navegador e acesse http://127.0.0.1:5000.
 
-Chaves de API: Abra os arquivos bot_bybit.py e painel.py e insira suas chaves de API da Bybit nos locais indicados:
+Primeiros Passos
+O primeiro usu√°rio precisa ser cadastrado como admin. Na tela de cadastro, selecione o tipo "Admin" e utilize o token de administrador definido no arquivo app.py (o padr√£o √© @ssjjti).
 
+Ap√≥s o login como admin, voc√™ poder√° cadastrar os outros usu√°rios.
 
-API_KEY = "SUA_API_KEY"
-API_SECRET = "SEU_API_SECRET"
-Arquivo de ConfiguraÁ„o: Crie um arquivo config.yaml na raiz do projeto para definir os par‚metros da estratÈgia. VocÍ pode comeÁar com este exemplo:
+ü§ù Como Contribuir
+Contribui√ß√µes s√£o bem-vindas! Se voc√™ tem ideias para novas funcionalidades ou encontrou algum bug, siga os passos:
 
+Fa√ßa um fork deste reposit√≥rio.
 
-risk_perc: 0.01
-ml_thresholds:
-  BTCUSDT: 0.65
-  ETHUSDT: 0.65
-adx_threshold: 25
+Crie uma nova branch para sua feature (git checkout -b minha-feature).
 
-4. ExecuÁ„o
-O sistema foi projetado para ser iniciado com um ˙nico comando, que orquestra o treinamento do modelo (se necess·rio), o servidor de inferÍncia e o painel.
+Fa√ßa o commit das suas altera√ß√µes (git commit -m 'Adiciona nova funcionalidade').
 
-Treine os Modelos: (Execute apenas na primeira vez ou quando quiser retreinar)
+Envie para a sua branch (git push origin minha-feature).
 
+Abra um Pull Request.
 
-python model_trainer.py
-Inicie o Sistema Completo:
-O script bot_bybit.py foi projetado para iniciar o servidor de inferÍncia, o painel e a lÛgica de trading.
-
-
-python bot_bybit.py
-Acesse o Painel: Abra seu navegador e acesse http://localhost:8080 para monitorar o robÙ.
-
-Autor
-Ronaldo Neves Barbosa Neto
-
-LinkedIn: https://www.linkedin.com/in/ronaldo-neves-barbosa-neto/
+üìÑ Licen√ßa
+Este projeto est√° licenciado sob a Licen√ßa MIT.
